@@ -24,7 +24,7 @@ async def on_message(message): #co se má stát, že někdo odešle zprávu
                 await message.channel.send("Díky za přiznání, za chvíli ho zveřejním")
             except discord.errors.Forbidden:
                 pass
-            db["přiznání"].append(message)
+            db["přiznání"].append(message.content)
             channel = client.get_channel(971114306601107536) #objekt channel, s id kanálu #test-room - později se změní na #přiznání
             await channel.send(message.content) #odeslání textu zprávy do správného kanálu
 
