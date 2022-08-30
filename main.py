@@ -1,11 +1,15 @@
-import discord
+import discord, os
 from dotenv import load_dotenv
-import os
 from replit import db
 
 if "přiznání" not in db.keys():
     db["přiznání"] = []
-    
+
+def publish():
+    if len(db["přiznání"]) != 0:
+        channel = client.get_channel(971114306601107536) #objekt channel, s id kanálu #test-room - později se změní na #přiznání
+        await channel.send(db["přiznání"]) #odeslání textu zprávy do správného kanálu
+
 intents = discord.Intents.default() #oprávnění bota
 intents.message_content = True
 intents.messages = True
@@ -25,8 +29,6 @@ async def on_message(message): #co se má stát, že někdo odešle zprávu
             except discord.errors.Forbidden:
                 pass
             db["přiznání"].append(message.content)
-            channel = client.get_channel(971114306601107536) #objekt channel, s id kanálu #test-room - později se změní na #přiznání
-            await channel.send(message.content) #odeslání textu zprávy do správného kanálu
 
 load_dotenv() #načtení tokenu z .env
 client.run(os.getenv('TOKEN'))
