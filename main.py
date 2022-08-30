@@ -1,4 +1,5 @@
 import discord
+from dotenv import load_dotenv
 import os
 
 client = discord.Client(intents=discord.Intents.default())
@@ -16,4 +17,5 @@ async def on_message(message):
         await message.channel.send('Hello!')
         print("answered")
 
+load_dotenv()
 client.run(os.getenv('TOKEN'))
