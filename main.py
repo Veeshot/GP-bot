@@ -1,14 +1,10 @@
-import discord, os
+from asyncio import tasks
+import discord, os, asyncio
 from dotenv import load_dotenv
 from replit import db
 
 if "přiznání" not in db.keys():
     db["přiznání"] = []
-
-def publish():
-    if len(db["přiznání"]) != 0:
-        channel = client.get_channel(971114306601107536) #objekt channel, s id kanálu #test-room - později se změní na #přiznání
-        await channel.send(db["přiznání"]) #odeslání textu zprávy do správného kanálu
 
 intents = discord.Intents.default() #oprávnění bota
 intents.message_content = True
@@ -29,6 +25,14 @@ async def on_message(message): #co se má stát, že někdo odešle zprávu
             except discord.errors.Forbidden:
                 pass
             db["přiznání"].append(message.content)
+
+@tasks.loop(seconds=10) #kód v bloku by se měl opakovat každých 10 sekund
+async def publish():
+    if len(db["přiznání"]) != 0:
+        channel = client.get_channel(971114306601107536) #objekt channel, s id kanálu #test-room - později se změní na #přiznání
+        await channel.send(db["přiznání"][0]) #odeslání textu zprávy do správného kanálu
+        db["přiznání"].pop(0)
+        print("succesfully published")
 
 load_dotenv() #načtení tokenu z .env
 client.run(os.getenv('TOKEN'))
