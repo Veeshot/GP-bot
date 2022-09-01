@@ -16,6 +16,7 @@ client = discord.Client(intents=intents)
 async def on_ready(): #co se má stát v moment co je bot připojen a připraven
     publish.start() #spustí loop s funkcí publish
     print('{0.user} is now online'.format(client))
+    print('There are currently {0} messages pending to be published'.format(len(db["přiznání"])))
     
 @client.event
 async def on_message(message): #co se má stát, že někdo odešle zprávu
