@@ -1,6 +1,6 @@
 import discord, os
-from discord.ext import tasks, commands
-from datetime import date
+from discord.ext import commands
+from datetime import date, datetime
 from dotenv import load_dotenv
 from replit import db
 
@@ -11,14 +11,9 @@ intents.members = True
 
 bot = commands.Bot(intents=intents, command_prefix='?')
 
-
 @bot.event
 async def on_ready():  #co se má stát v moment co je bot připojen a připraven
-    publish.start()  #spustí loop s funkcí publish
     print('{0.user} is now online'.format(bot))
-    print('There are currently {0} messages pending to be published'.format(
-        len(db["přiznání"])))
-
 
 @bot.event
 async def on_message(message):  #co se má stát, že někdo odešle zprávu
@@ -27,25 +22,17 @@ async def on_message(message):  #co se má stát, že někdo odešle zprávu
             try:
                 await message.channel.send(
                     "Díky za přiznání, za chvíli ho zveřejním")
+                await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
             except discord.errors.Forbidden:
                 pass
-            db["přiznání"].append(message.content)
-    await bot.process_commands(message
-                               )  #zkontroluje jestli zpráva není command
-
+            db[str(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))] = (str(message.author), str(message.content))
+    await bot.process_commands(message)  #zkontroluje jestli zpráva není command
 
 @bot.command(name="year_up", pass_context=True)
-@commands.has_any_role("Full admin", "Full admin vol.2"
-                       )  #příkaz mohou používat pouze určité role
+@commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
 async def role_change(ctx):
-    await discord.utils.get(ctx.guild.roles,
-                            name="V8").edit(name="Absolvent {0}-{1}".format(
-                                str(date.today().year - 8)[-2:],
-                                str(date.today().year)[-2:]))
-    await discord.utils.get(ctx.guild.roles,
-                            name="4.A").edit(name="Absolvent {0}-{1}".format(
-                                str(date.today().year - 4)[-2:],
-                                str(date.today().year)[-2:]))
+    await discord.utils.get(ctx.guild.roles,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
+    await discord.utils.get(ctx.guild.roles,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
     await discord.utils.get(ctx.guild.roles, name="V7").edit(name="V8")
     await discord.utils.get(ctx.guild.roles, name="3.A").edit(name="4.A")
     await discord.utils.get(ctx.guild.roles, name="V6").edit(name="V7")
@@ -58,14 +45,8 @@ async def role_change(ctx):
     await discord.utils.get(ctx.guild.roles, name="V1").edit(name="V2")
     await ctx.guild.create_role(name="V1")
     await ctx.guild.create_role(name="1.A")
-    await discord.utils.get(ctx.guild.categories,
-                            name="V8").edit(name="Absolvent {0}-{1}".format(
-                                str(date.today().year - 8)[-2:],
-                                str(date.today().year)[-2:]))
-    await discord.utils.get(ctx.guild.categories,
-                            name="4.A").edit(name="Absolvent {0}-{1}".format(
-                                str(date.today().year - 4)[-2:],
-                                str(date.today().year)[-2:]))
+    await discord.utils.get(ctx.guild.categories,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
+    await discord.utils.get(ctx.guild.categories,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
     await discord.utils.get(ctx.guild.categories, name="V7").edit(name="V8")
     await discord.utils.get(ctx.guild.categories, name="3.A").edit(name="4.A")
     await discord.utils.get(ctx.guild.categories, name="V6").edit(name="V7")
@@ -77,18 +58,6 @@ async def role_change(ctx):
     await discord.utils.get(ctx.guild.categories, name="V2").edit(name="V3")
     await discord.utils.get(ctx.guild.categories, name="V1").edit(name="V2")
     print("Names of roles and channels changed to match current school year")
-
-
-@tasks.loop(seconds=10)  #kód v bloku by se měl opakovat každých 10 sekund
-async def publish():
-    if len(db["přiznání"]) != 0:
-        channel = bot.get_channel(
-            1014200735212249088
-        )  #objekt channel, s id kanálu #test-room - později se změní na #přiznání
-        await channel.send(db["přiznání"][0]
-                           )  #odeslání textu zprávy do správného kanálu
-        db["přiznání"].pop(0)
-
 
 load_dotenv()  #načtení tokenu z .env
 bot.run(os.getenv('TOKEN'))
