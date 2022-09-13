@@ -25,7 +25,9 @@ async def on_message(message):  #co se má stát, že někdo odešle zprávu
                 await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
             except discord.errors.Forbidden:
                 pass
-            db[str(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))] = (str(message.author), str(message.content))
+            db[str(db["messages"])] = (str(message.content), str(message.author), datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+            db["messages"] += 1
+    
     await bot.process_commands(message)  #zkontroluje jestli zpráva není command
 
 @bot.command(name="year_up", pass_context=True)
