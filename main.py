@@ -20,17 +20,18 @@ async def on_message(message):  #co se má stát, že někdo odešle zprávu
     if message.author != bot.user:  #zajišťuje, že bot nereaguje na své zprávy
         if not message.guild:  #omezuje přijaté zprávy, na které bot bude reagovat, pouze na zprávy v jeho DMs
             try:
-                await message.channel.send(
-                    "Díky za přiznání, za chvíli ho zveřejním")
-                await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
+                await message.channel.send("Díky za přiznání, za chvíli ho zveřejním")
+                await bot.get_channel(1019683358810320999).send(message.content)  #odeslání textu zprávy do správného kanálu
             except discord.errors.Forbidden:
                 pass
-            id = str(len(db.keys()-1))
+            id = 0
+            for key in db.keys():
+                if key != "banned":
+                    if int(key) > id:
+                        id = int(key)
             while 1:
-                if str(id) in db.keys():
-                    id = int(id)
-                    id +=1
-                else:
+                id +=1
+                if str(id) not in db.keys():
                     db[str(id)] = [str(message.content), str(message.author), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "Published"]
                     break
     await bot.process_commands(message)  #zkontroluje jestli zpráva není command
