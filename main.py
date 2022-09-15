@@ -79,7 +79,7 @@ async def role_change(ctx):
 @bot.command(name="list", pass_context=True)
 @commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
 async def db_list(ctx):
-    message = ""
+    message = "Total messages - {0}\n".format(len(db.keys())-1)
     for key in db.keys():
         if key == "banned":
             message += ("{0} - {1}\n".format(key, list(db[key])))
