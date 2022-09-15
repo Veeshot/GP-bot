@@ -33,7 +33,6 @@ async def on_message(message):  #co se má stát, že někdo odešle zprávu
                 else:
                     db[str(id)] = [str(message.content), str(message.author), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "Published"]
                     break
-    
     await bot.process_commands(message)  #zkontroluje jestli zpráva není command
 
 @bot.command(name="year_up", pass_context=True)
