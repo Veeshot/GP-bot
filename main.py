@@ -21,7 +21,7 @@ async def on_message(message):  #co se má stát, že někdo odešle zprávu
         if not message.guild:  #omezuje přijaté zprávy, na které bot bude reagovat, pouze na zprávy v jeho DMs
             try:
                 await message.channel.send("Díky za přiznání, za chvíli ho zveřejním")
-                await bot.get_channel(1019683358810320999).send(message.content)  #odeslání textu zprávy do správného kanálu
+                await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
             except discord.errors.Forbidden:
                 pass
             id = 0
