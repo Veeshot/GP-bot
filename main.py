@@ -19,7 +19,7 @@ async def on_ready():  #co se má stát v moment co je bot připojen a připrave
 async def on_message(message):  #co se má stát, že někdo odešle zprávu
     if message.author != bot.user:  #zajišťuje, že bot nereaguje na své zprávy
         if not message.guild:  #omezuje přijaté zprávy, na které bot bude reagovat, pouze na zprávy v jeho DMs
-            if message.author in db["banned"]:
+            if str(message.author) in db["banned"]:
                 try:
                     await message.channel.send("Kvůli tvým nevhodným přiznáním ti byla odebrána možnost psát další")
                 except discord.errors.Forbidden:
