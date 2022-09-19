@@ -20,24 +20,26 @@ async def on_message(message):  #co se má stát, že někdo odešle zprávu
     if message.author != bot.user:  #zajišťuje, že bot nereaguje na své zprávy
         if not message.guild:  #omezuje přijaté zprávy, na které bot bude reagovat, pouze na zprávy v jeho DMs
             if message.author in db["banned"]:
-                reply = "Kvůli tvým nevhodným přiznáním ti byla odebrána možnost psát další"
+                try:
+                    await message.channel.send("Kvůli tvým nevhodným přiznáním ti byla odebrána možnost psát další")
+                except discord.errors.Forbidden:
+                    pass
             else:
-                reply = "Díky za přiznání, za chvíli ho zveřejním"
-            try:
-                await message.channel.send(reply)
-                await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
-            except discord.errors.Forbidden:
-                pass
-            id = 0
-            for key in db.keys():
-                if key != "banned":
-                    if int(key) > id:
-                        id = int(key)
-            while 1:
-                id +=1
-                if str(id) not in db.keys():
-                    db[str(id)] = [str(message.content), str(message.author), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "Published"]
-                    break
+                try:
+                    await message.channel.send("Díky za přiznání, za chvíli ho zveřejním")
+                    await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
+                except discord.errors.Forbidden:
+                    pass
+                id = 0
+                for key in db.keys():
+                    if key != "banned":
+                        if int(key) > id:
+                            id = int(key)
+                while 1:
+                    id +=1
+                    if str(id) not in db.keys():
+                        db[str(id)] = [str(message.content), str(message.author), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "Published"]
+                        break
     await bot.process_commands(message)  #zkontroluje jestli zpráva není command
 
 @bot.command(name="year_up", pass_context=True)
