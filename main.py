@@ -1,4 +1,4 @@
-import discord, os
+import discord, os, asyncio
 from discord.ext import commands
 from datetime import date, datetime
 from dotenv import load_dotenv
@@ -19,21 +19,28 @@ async def on_ready():  #co se má stát v moment co je bot připojen a připrave
 async def on_message(message):  #co se má stát, že někdo odešle zprávu
     if message.author != bot.user:  #zajišťuje, že bot nereaguje na své zprávy
         if not message.guild:  #omezuje přijaté zprávy, na které bot bude reagovat, pouze na zprávy v jeho DMs
-            try:
-                await message.channel.send("Díky za přiznání, za chvíli ho zveřejním")
-                await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
-            except discord.errors.Forbidden:
-                pass
-            id = 0
-            for key in db.keys():
-                if key != "banned":
-                    if int(key) > id:
-                        id = int(key)
-            while 1:
-                id +=1
-                if str(id) not in db.keys():
-                    db[str(id)] = [str(message.content), str(message.author), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "Published"]
-                    break
+
+            if str(message.author) in db["banned"]:
+                try:
+                    await message.channel.send("Kvůli tvým nevhodným přiznáním ti byla odebrána možnost psát další")
+                except discord.errors.Forbidden:
+                    pass
+            else:
+                try:
+                    await message.channel.send("Díky za přiznání, za chvíli ho zveřejním")
+                    await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
+                except discord.errors.Forbidden:
+                    pass
+                id = 0
+                for key in db.keys():
+                    if key != "banned":
+                        if int(key) > id:
+                            id = int(key)
+                while 1:
+                    id +=1
+                    if str(id) not in db.keys():
+                        db[str(id)] = [str(message.content), str(message.author), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "Published"]
+                        break
     await bot.process_commands(message)  #zkontroluje jestli zpráva není command
 
 @bot.command(name="year_up", pass_context=True)
@@ -46,35 +53,41 @@ async def role_change(ctx):
     try: 
         reaction, user = await bot.wait_for('reaction_add', timeout=10, check=check)
         if str(reaction.emoji) == "✅":
-                await discord.utils.get(ctx.guild.roles,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
-                await discord.utils.get(ctx.guild.roles,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
-                await discord.utils.get(ctx.guild.roles, name="V7").edit(name="V8")
-                await discord.utils.get(ctx.guild.roles, name="3.A").edit(name="4.A")
-                await discord.utils.get(ctx.guild.roles, name="V6").edit(name="V7")
-                await discord.utils.get(ctx.guild.roles, name="2.A").edit(name="3.A")
-                await discord.utils.get(ctx.guild.roles, name="V5").edit(name="V6")
-                await discord.utils.get(ctx.guild.roles, name="1.A").edit(name="2.A")
-                await discord.utils.get(ctx.guild.roles, name="V4").edit(name="V5")
-                await discord.utils.get(ctx.guild.roles, name="V3").edit(name="V4")
-                await discord.utils.get(ctx.guild.roles, name="V2").edit(name="V3")
-                await discord.utils.get(ctx.guild.roles, name="V1").edit(name="V2")
-                await ctx.guild.create_role(name="V1")
-                await ctx.guild.create_role(name="1.A")
-                await discord.utils.get(ctx.guild.categories,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
-                await discord.utils.get(ctx.guild.categories,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
-                await discord.utils.get(ctx.guild.categories, name="V7").edit(name="V8")
-                await discord.utils.get(ctx.guild.categories, name="3.A").edit(name="4.A")
-                await discord.utils.get(ctx.guild.categories, name="V6").edit(name="V7")
-                await discord.utils.get(ctx.guild.categories, name="2.A").edit(name="3.A")
-                await discord.utils.get(ctx.guild.categories, name="V5").edit(name="V6")
-                await discord.utils.get(ctx.guild.categories, name="1.A").edit(name="2.A")
-                await discord.utils.get(ctx.guild.categories, name="V4").edit(name="V5")
-                await discord.utils.get(ctx.guild.categories, name="V3").edit(name="V4")
-                await discord.utils.get(ctx.guild.categories, name="V2").edit(name="V3")
-                await discord.utils.get(ctx.guild.categories, name="V1").edit(name="V2")
-                await ctx.send("Names of roles and channels changed to match current school year")
-    except: 
-        await ctx.send("Cancelled")
+            await discord.utils.get(ctx.guild.roles,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
+            await discord.utils.get(ctx.guild.roles,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
+            await discord.utils.get(ctx.guild.categories,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
+            await discord.utils.get(ctx.guild.categories,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
+            for id in range(7):
+                list_8=["V7","V6","V5","V4","V3","V2","V1"]
+                if id==0:
+                    await discord.utils.get(ctx.guild.roles, name="V7").edit(name="V8")
+                    await discord.utils.get(ctx.guild.categories, name="V7").edit(name="V8")
+                else:
+                    await discord.utils.get(ctx.guild.roles, name=list_8[id]).edit(name=list_8[id-1])
+                    await discord.utils.get(ctx.guild.categories, name=list_8[id]).edit(name=list_8[id-1])
+            for id in range(3):
+                list_3=["3.A","2.A","1.A"]
+                if id==0:
+                    await discord.utils.get(ctx.guild.roles, name="3.A").edit(name="4.A")
+                    await discord.utils.get(ctx.guild.categories, name="3.A").edit(name="4.A")
+                else:
+                    await discord.utils.get(ctx.guild.roles, name=list_3[id]).edit(name=list_3[id-1])
+                    await discord.utils.get(ctx.guild.categories, name=list_3[id]).edit(name=list_3[id-1])
+            for id in range(2):
+                list_2=["V1","1.A"]
+                await ctx.guild.create_role(name=list_2[id])
+                await ctx.guild.create_category(name=list_2[id]) #possible error 
+                await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(ctx.guild.default_role, view_channel=False)
+                await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name=list_2[id]), view_channel=True, connect=True)
+                await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name="Třídní admin"), manage_channels=True, manage_permissions=True, manage_webhooks=True, create_instant_invite=True, send_messages=True, send_messages_in_threads=True, create_public_threads=True, create_private_threads=True, embed_links=True, attach_files=True, add_reactions=True, use_external_emojis=True, use_external_stickers=True, mention_everyone=True, manage_messages=True, manage_threads=True, read_message_history=True, send_tts_messages=True, use_application_commands=True, connect=True, speak=True, stream=True, use_voice_activation=True, mute_members=True, deafen_members=True, move_members=True, manage_events=True,)
+                await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name="ADMIN-BOTI"), view_channel=True, connect=True)
+                await ctx.guild.create_text_channel(name = "třídní-chat", category=discord.utils.get(ctx.guild.categories, name=list_2[id]))
+                await ctx.guild.create_voice_channel(name = "Třídní voice", category=discord.utils.get(ctx.guild.categories, name=list_2[id]))
+                await discord.utils.get(ctx.guild.channels,name="třídní-chat").edit(sync_permissions=True)
+                await discord.utils.get(ctx.guild.channels,name="Třídní voice").edit(sync_permissions=True)
+            await ctx.send("Names of roles and channels changed to match current school year")
+    except asyncio.TimeoutError: 
+        await ctx.send("Timed out")
 
 @bot.command(name="list", pass_context=True)
 @commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
