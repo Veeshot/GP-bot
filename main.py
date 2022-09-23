@@ -55,38 +55,34 @@ async def role_change(ctx):
         if str(reaction.emoji) == "✅":
                 await discord.utils.get(ctx.guild.roles,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
                 await discord.utils.get(ctx.guild.roles,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
-                await discord.utils.get(ctx.guild.roles, name="V7").edit(name="V8")
-                await discord.utils.get(ctx.guild.roles, name="3.A").edit(name="4.A")
-                await discord.utils.get(ctx.guild.roles, name="V6").edit(name="V7")
-                await discord.utils.get(ctx.guild.roles, name="2.A").edit(name="3.A")
-                await discord.utils.get(ctx.guild.roles, name="V5").edit(name="V6")
-                await discord.utils.get(ctx.guild.roles, name="1.A").edit(name="2.A")
-                await discord.utils.get(ctx.guild.roles, name="V4").edit(name="V5")
-                await discord.utils.get(ctx.guild.roles, name="V3").edit(name="V4")
-                await discord.utils.get(ctx.guild.roles, name="V2").edit(name="V3")
-                await discord.utils.get(ctx.guild.roles, name="V1").edit(name="V2")
-                await ctx.guild.create_role(name="V1")
-                await ctx.guild.create_role(name="1.A")
                 await discord.utils.get(ctx.guild.categories,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
                 await discord.utils.get(ctx.guild.categories,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
-                await discord.utils.get(ctx.guild.categories, name="V7").edit(name="V8")
-                await discord.utils.get(ctx.guild.categories, name="3.A").edit(name="4.A")
-                await discord.utils.get(ctx.guild.categories, name="V6").edit(name="V7")
-                await discord.utils.get(ctx.guild.categories, name="2.A").edit(name="3.A")
-                await discord.utils.get(ctx.guild.categories, name="V5").edit(name="V6")
-                await discord.utils.get(ctx.guild.categories, name="1.A").edit(name="2.A")
-                await discord.utils.get(ctx.guild.categories, name="V4").edit(name="V5")
-                await discord.utils.get(ctx.guild.categories, name="V3").edit(name="V4")
-                await discord.utils.get(ctx.guild.categories, name="V2").edit(name="V3")
-                await discord.utils.get(ctx.guild.categories, name="V1").edit(name="V2")
-                await ctx.guild.create_category(name="V1") 
-                await discord.utils.get(ctx.guild.categories, name="V1").set_permissions(ctx.guild.default_role, view_channel=False)
-                await discord.utils.get(ctx.guild.categories, name="V1").set_permissions(discord.utils.get(ctx.guild.roles, name="V1"), view_channel=True, connect=True)
-                await discord.utils.get(ctx.guild.categories, name="V1").set_permissions(discord.utils.get(ctx.guild.roles, name="Třídní admin"), manage_channels=True, manage_permissions=True, manage_webhooks=True, create_instant_invite=True, send_messages=True, send_messages_in_threads=True, create_public_threads=True, create_private_threads=True, embed_links=True, attach_files=True, add_reactions=True, use_external_emojis=True, use_external_stickers=True, mention_everyone=True, manage_messages=True, manage_threads=True, read_message_history=True, send_tts_messages=True, use_application_commands=True, connect=True, speak=True, stream=True, use_embedded_activites=True, use_voice_activation=True, mute_members=True, deafen_members=True, move_members=True, manage_events=True,)
-                await discord.utils.get(ctx.guild.categories, name="V1").set_permissions(discord.utils.get(ctx.guild.roles, name="ADMIN-BOTI"), view_channel=True, connect=True)
-                await ctx.guild.create_text_channel(name = "Třídní chat", category=discord.utils.get(ctx.guild.categories, name="V1"), sync_permissions=True)
-                await ctx.guild.create_voice_channel(name = "Třídní voice", category=discord.utils.get(ctx.guild.categories, name="V1"), sync_permissions=True)
-                await ctx.guild.create_category(name="1.A")
+                for id in range(7):
+                    list_8=["V7","V6","V5","V4","V3","V2","V1"]
+                    if id==0:
+                        await discord.utils.get(ctx.guild.roles, name="V7").edit(name="V8")
+                        await discord.utils.get(ctx.guild.categories, name="V7").edit(name="V8")
+                    else:
+                        await discord.utils.get(ctx.guild.roles, name=list_8[id]).edit(name=list_8[id-1])
+                        await discord.utils.get(ctx.guild.categories, name=list_8[id]).edit(name=list_8[id-1])
+                for id in range(3):
+                    list_3=["3.A","2.A","1.A"]
+                    if id==0:
+                        await discord.utils.get(ctx.guild.roles, name="3.A").edit(name="4.A")
+                        await discord.utils.get(ctx.guild.categories, name="3.A").edit(name="4.A")
+                    else:
+                        await discord.utils.get(ctx.guild.roles, name=list_3[id]).edit(name=list_3[id-1])
+                        await discord.utils.get(ctx.guild.categories, name=list_3[id]).edit(name=list_3[id-1])
+                for id in range(2):
+                    list_2=["V1","1.A"]
+                    await ctx.guild.create_role(name=list_2[id])
+                    await ctx.guild.create_category(name=list_2[id]) 
+                    await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(ctx.guild.default_role, view_channel=False)
+                    await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name=list_2[id]), view_channel=True, connect=True)
+                    await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name="Třídní admin"), manage_channels=True, manage_permissions=True, manage_webhooks=True, create_instant_invite=True, send_messages=True, send_messages_in_threads=True, create_public_threads=True, create_private_threads=True, embed_links=True, attach_files=True, add_reactions=True, use_external_emojis=True, use_external_stickers=True, mention_everyone=True, manage_messages=True, manage_threads=True, read_message_history=True, send_tts_messages=True, use_application_commands=True, connect=True, speak=True, stream=True, use_embedded_activites=True, use_voice_activation=True, mute_members=True, deafen_members=True, move_members=True, manage_events=True,)
+                    await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name="ADMIN-BOTI"), view_channel=True, connect=True)
+                    await ctx.guild.create_text_channel(name = "Třídní chat", category=discord.utils.get(ctx.guild.categories, name=list_2[id]), sync_permissions=True)
+                    await ctx.guild.create_voice_channel(name = "Třídní voice", category=discord.utils.get(ctx.guild.categories, name=list_2[id]), sync_permissions=True)
                 await ctx.send("Names of roles and channels changed to match current school year")
     except: 
         await ctx.send("Cancelled")
