@@ -1,4 +1,4 @@
-from curses import use_env
+from msilib.schema import Error
 import discord, os
 from discord.ext import commands
 from datetime import date, datetime
@@ -76,7 +76,7 @@ async def role_change(ctx):
                 for id in range(2):
                     list_2=["V1","1.A"]
                     await ctx.guild.create_role(name=list_2[id])
-                    await ctx.guild.create_category(name=list_2[id]) 
+                    await ctx.guild.create_category(name=list_2[id]) #possible error 
                     await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(ctx.guild.default_role, view_channel=False)
                     await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name=list_2[id]), view_channel=True, connect=True)
                     await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name="Třídní admin"), manage_channels=True, manage_permissions=True, manage_webhooks=True, create_instant_invite=True, send_messages=True, send_messages_in_threads=True, create_public_threads=True, create_private_threads=True, embed_links=True, attach_files=True, add_reactions=True, use_external_emojis=True, use_external_stickers=True, mention_everyone=True, manage_messages=True, manage_threads=True, read_message_history=True, send_tts_messages=True, use_application_commands=True, connect=True, speak=True, stream=True, use_embedded_activites=True, use_voice_activation=True, mute_members=True, deafen_members=True, move_members=True, manage_events=True,)
@@ -84,8 +84,8 @@ async def role_change(ctx):
                     await ctx.guild.create_text_channel(name = "Třídní chat", category=discord.utils.get(ctx.guild.categories, name=list_2[id]), sync_permissions=True)
                     await ctx.guild.create_voice_channel(name = "Třídní voice", category=discord.utils.get(ctx.guild.categories, name=list_2[id]), sync_permissions=True)
                 await ctx.send("Names of roles and channels changed to match current school year")
-    except: 
-        await ctx.send("Cancelled")
+    except Exception as e: 
+        await ctx.send("Cancelled due to {}".format(e))
 
 @bot.command(name="list", pass_context=True)
 @commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
