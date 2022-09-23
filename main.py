@@ -78,6 +78,11 @@ async def role_change(ctx):
                 await discord.utils.get(ctx.guild.categories, name="V3").edit(name="V4")
                 await discord.utils.get(ctx.guild.categories, name="V2").edit(name="V3")
                 await discord.utils.get(ctx.guild.categories, name="V1").edit(name="V2")
+                await ctx.guild.create_category(name="V1")
+                #await discord.utils.get(ctx.guild.categories, name="V1").set_permissions("Role","Oprávnění")
+                await ctx.guild.create_text_channel(name = "Třídní chat", category=discord.utils.get(ctx.guild.categories, name="V1"), sync_permissions=True)
+                await ctx.guild.create_voice_channel(name = "Třídní voice", category=discord.utils.get(ctx.guild.categories, name="V1"), sync_permissions=True)
+                await ctx.guild.create_category(name="1.A")
                 await ctx.send("Names of roles and channels changed to match current school year")
     except: 
         await ctx.send("Cancelled")
