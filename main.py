@@ -1,4 +1,3 @@
-from msilib.schema import Error
 import discord, os
 from discord.ext import commands
 from datetime import date, datetime
