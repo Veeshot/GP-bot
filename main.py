@@ -1,3 +1,4 @@
+from curses import use_env
 import discord, os
 from discord.ext import commands
 from datetime import date, datetime
@@ -78,8 +79,11 @@ async def role_change(ctx):
                 await discord.utils.get(ctx.guild.categories, name="V3").edit(name="V4")
                 await discord.utils.get(ctx.guild.categories, name="V2").edit(name="V3")
                 await discord.utils.get(ctx.guild.categories, name="V1").edit(name="V2")
-                await ctx.guild.create_category(name="V1")
-                #await discord.utils.get(ctx.guild.categories, name="V1").set_permissions("Role","Oprávnění")
+                await ctx.guild.create_category(name="V1") 
+                await discord.utils.get(ctx.guild.categories, name="V1").set_permissions(ctx.guild.default_role, view_channel=False)
+                await discord.utils.get(ctx.guild.categories, name="V1").set_permissions(discord.utils.get(ctx.guild.roles, name="V1"), view_channel=True, connect=True)
+                await discord.utils.get(ctx.guild.categories, name="V1").set_permissions(discord.utils.get(ctx.guild.roles, name="Třídní admin"), manage_channels=True, manage_permissions=True, manage_webhooks=True, create_instant_invite=True, send_messages=True, send_messages_in_threads=True, create_public_threads=True, create_private_threads=True, embed_links=True, attach_files=True, add_reactions=True, use_external_emojis=True, use_external_stickers=True, mention_everyone=True, manage_messages=True, manage_threads=True, read_message_history=True, send_tts_messages=True, use_application_commands=True, connect=True, speak=True, stream=True, use_embedded_activites=True, use_voice_activation=True, mute_members=True, deafen_members=True, move_members=True, manage_events=True,)
+                await discord.utils.get(ctx.guild.categories, name="V1").set_permissions(discord.utils.get(ctx.guild.roles, name="ADMIN-BOTI"), view_channel=True, connect=True)
                 await ctx.guild.create_text_channel(name = "Třídní chat", category=discord.utils.get(ctx.guild.categories, name="V1"), sync_permissions=True)
                 await ctx.guild.create_voice_channel(name = "Třídní voice", category=discord.utils.get(ctx.guild.categories, name="V1"), sync_permissions=True)
                 await ctx.guild.create_category(name="1.A")
