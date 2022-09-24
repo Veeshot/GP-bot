@@ -52,31 +52,27 @@ async def role_change(ctx):
         return user == ctx.author
     try: 
         reaction, user = await bot.wait_for('reaction_add', timeout=10, check=check)
-        if str(reaction.emoji) == "✅":
-            await discord.utils.get(ctx.guild.roles,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
-            await discord.utils.get(ctx.guild.roles,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
-            await discord.utils.get(ctx.guild.categories,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
-            await discord.utils.get(ctx.guild.categories,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
-            for id in range(7):
-                list_8=["V7","V6","V5","V4","V3","V2","V1"]
+        if str(reaction.emoji) == "✅":           
+            for id in range(8):
+                list_8=["V8","V7","V6","V5","V4","V3","V2","V1"]
                 if id==0:
-                    await discord.utils.get(ctx.guild.roles, name="V7").edit(name="V8")
-                    await discord.utils.get(ctx.guild.categories, name="V7").edit(name="V8")
+                    await discord.utils.get(ctx.guild.roles,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
+                    await discord.utils.get(ctx.guild.categories,name="V8").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 8)[-2:],str(date.today().year)[-2:]))
                 else:
                     await discord.utils.get(ctx.guild.roles, name=list_8[id]).edit(name=list_8[id-1])
                     await discord.utils.get(ctx.guild.categories, name=list_8[id]).edit(name=list_8[id-1])
-            for id in range(3):
-                list_3=["3.A","2.A","1.A"]
+            for id in range(4):
+                list_4=["4.A","3.A","2.A","1.A"]
                 if id==0:
-                    await discord.utils.get(ctx.guild.roles, name="3.A").edit(name="4.A")
-                    await discord.utils.get(ctx.guild.categories, name="3.A").edit(name="4.A")
+                    await discord.utils.get(ctx.guild.roles,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
+                    await discord.utils.get(ctx.guild.categories,name="4.A").edit(name="Absolvent {0}-{1}".format(str(date.today().year - 4)[-2:],str(date.today().year)[-2:]))
                 else:
-                    await discord.utils.get(ctx.guild.roles, name=list_3[id]).edit(name=list_3[id-1])
-                    await discord.utils.get(ctx.guild.categories, name=list_3[id]).edit(name=list_3[id-1])
+                    await discord.utils.get(ctx.guild.roles, name=list_4[id]).edit(name=list_4[id-1])
+                    await discord.utils.get(ctx.guild.categories, name=list_4[id]).edit(name=list_4[id-1])
             for id in range(2):
                 list_2=["V1","1.A"]
                 await ctx.guild.create_role(name=list_2[id])
-                await ctx.guild.create_category(name=list_2[id]) #possible error 
+                await ctx.guild.create_category(name=list_2[id]) 
                 await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(ctx.guild.default_role, view_channel=False)
                 await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name=list_2[id]), view_channel=True, connect=True)
                 await discord.utils.get(ctx.guild.categories, name=list_2[id]).set_permissions(discord.utils.get(ctx.guild.roles, name="Třídní admin"), manage_channels=True, manage_permissions=True, manage_webhooks=True, create_instant_invite=True, send_messages=True, send_messages_in_threads=True, create_public_threads=True, create_private_threads=True, embed_links=True, attach_files=True, add_reactions=True, use_external_emojis=True, use_external_stickers=True, mention_everyone=True, manage_messages=True, manage_threads=True, read_message_history=True, send_tts_messages=True, use_application_commands=True, connect=True, speak=True, stream=True, use_voice_activation=True, mute_members=True, deafen_members=True, move_members=True, manage_events=True,)
