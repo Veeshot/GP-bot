@@ -31,6 +31,12 @@ async def on_message(message):  #co se má stát, že někdo odešle zprávu
                     await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
                 except discord.errors.Forbidden:
                     pass
+                for key in db.keys(): #spam limiter
+                    if db[key][1]==str(message.author):
+                        last=0
+                        if db[key][2]-db[last][2]>0:
+                            last=key
+                print(last)
                 id = 0
                 for key in db.keys():
                     if key != "banned":
