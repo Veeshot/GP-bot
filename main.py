@@ -104,7 +104,7 @@ async def db_list(ctx):
             message += ("{0} - {1}\n".format(key, list(db[key])))
             message += ("------------------------------------\n")
     highest_id = 0
-    for key in db.keys():
+    for key in db.keys(): #highest ID -> for how many times cycle shoud repeat
         if key != "banned":
             if int(key) > highest_id:
                 highest_id = int(key)
@@ -135,6 +135,27 @@ async def db_delete(ctx, id):
             await ctx.send("Cancelled")
     else:
         await ctx.send("No message with that id in database")
+        
+@bot.command(name="delall", pass_context=True)
+@commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
+async def db_erase(ctx):
+    check = await ctx.send("Are you sure you want to erase **whole** DB?")
+    await check.add_reaction("✅")
+    def check(reaction, user):
+        return user == ctx.author
+    try: 
+        reaction, user = await bot.wait_for('reaction_add', timeout=10, check=check)
+        if str(reaction.emoji) == "✅":
+            try:
+                for key in db.keys():
+                    if key != "banned":   
+                        del db[key]
+            except:
+                await ctx.send("DB could not be erased")
+            else:
+                await ctx.send("All entries from DB erased")
+    except: 
+        await ctx.send("Cancelled")
 
 load_dotenv()  #načtení tokenu z .env
 bot.run(os.getenv('TOKEN'))
