@@ -1,6 +1,6 @@
 import discord, os, asyncio
 from discord.ext import commands
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from dotenv import load_dotenv
 from replit import db
 
@@ -19,34 +19,38 @@ async def on_ready():  #co se má stát v moment co je bot připojen a připrave
 async def on_message(message):  #co se má stát, že někdo odešle zprávu
     if message.author != bot.user:  #zajišťuje, že bot nereaguje na své zprávy
         if not message.guild:  #omezuje přijaté zprávy, na které bot bude reagovat, pouze na zprávy v jeho DMs
-
+            reply=""
+            allowed=True
             if str(message.author) in db["banned"]:
-                try:
-                    await message.channel.send("Kvůli tvým nevhodným přiznáním ti byla odebrána možnost psát další")
-                except discord.errors.Forbidden:
-                    pass
+                reply="Kvůli tvým nevhodným přiznáním ti byla odebrána možnost psát další"
+                allowed=False
             else:
-                try:
-                    await message.channel.send("Díky za přiznání, za chvíli ho zveřejním")
-                    await bot.get_channel(1014200735212249088).send(message.content)  #odeslání textu zprávy do správného kanálu
-                except discord.errors.Forbidden:
-                    pass
                 for key in db.keys(): #spam limiter
-                    if db[key][1]==str(message.author):
-                        last=0
-                        if db[key][2]-db[last][2]>0:
-                            last=key
-                print(last)
+                    if key != "banned" and list(db[key])[1]==str(message.author): 
+                        delta = datetime.now() - datetime.strptime(list(db[key])[2], "%d/%m/%Y %H:%M:%S")
+                        if delta < timedelta(minutes=10):
+                            remaining=str(timedelta(minutes=10)-delta)
+                            reply="Než budeš moct poslat další přiznání musíš počkat ještě chvilku počkat. Zbývající čas: {0}".format(remaining[3:7])
+                            allowed=False
+            if allowed:
                 id = 0
-                for key in db.keys():
+                for key in db.keys(): #highest id in DB
                     if key != "banned":
                         if int(key) > id:
                             id = int(key)
-                while 1:
+                while 1: #save to DB
                     id +=1
                     if str(id) not in db.keys():
                         db[str(id)] = [str(message.content), str(message.author), datetime.now().strftime("%d/%m/%Y %H:%M:%S"), "Published"]
                         break
+                while str(id) not in db.keys():
+                    await asyncio.sleep(1)
+                try:
+                    reply="Díky za přiznání, hned ho zveřejním"
+                    await bot.get_channel(1014200735212249088).send(message.content) #odeslání textu zprávy do správného kanálu
+                except discord.errors.Forbidden:
+                    pass
+            await message.channel.send(reply)
     await bot.process_commands(message)  #zkontroluje jestli zpráva není command
 
 @bot.command(name="year_up", pass_context=True)
