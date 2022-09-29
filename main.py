@@ -108,11 +108,20 @@ async def db_list(ctx):
         if key != "banned":
             if int(key) > highest_id:
                 highest_id = int(key)
-    for id in range(highest_id+1): 
-        for key in db.keys():
-            if key == str(id):
-                message += ("{0} - {1}\n".format(key, list(db[key])))
-    await ctx.send(message)
+    try:
+        for id in range(highest_id+1):
+            for key in db.keys():
+                if key == str(id):
+                    new = "{0} - {1}\n".format(key, list(db[key]))
+                    if (len(message) + len(new)) >= 2000:
+                        await ctx.send(message)
+                        message=""
+                    message += new
+        if len(message) !=0:
+            await ctx.send(message)
+    except Exception as e:
+       ctx.send("Failed due to {}".format(e))
+
 
 @bot.command(name="del", pass_context=True)
 @commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
