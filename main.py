@@ -21,8 +21,12 @@ async def on_message(message):  #co se má stát, že někdo odešle zprávu
         if not message.guild:  #omezuje přijaté zprávy, na které bot bude reagovat, pouze na zprávy v jeho DMs
             reply=""
             allowed=True
+            print(len(str(message.content)))
             if str(message.author) in db["banned"]:
                 reply="Kvůli tvým nevhodným přiznáním ti byla odebrána možnost psát další"
+                allowed=False
+            elif len(str(message.content)) > 1800:
+                reply="Tvoje, přiznání je příliš dlouhé, prosím zkrať ho a pošli znovu"
                 allowed=False
             else:
                 for key in db.keys(): #spam limiter
@@ -120,9 +124,34 @@ async def db_list(ctx):
         if len(message) !=0:
             await ctx.send(message)
     except Exception as e:
-       ctx.send("Failed due to {}".format(e))
+       await ctx.send("Failed due to {}".format(e))
 
-
+@bot.command(name="listfile", pass_context=True)
+@commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
+async def file_list(ctx):
+    highest_id = 0
+    for key in db.keys(): #highest ID -> for how many times cycle shoud repeat
+        if key != "banned":
+            if int(key) > highest_id:
+                highest_id = int(key)
+    try:
+        file = open("db.txt", "w")
+    except Exception as e:
+       await ctx.send("Failed due to {}".format(e))
+    else:
+        file.write("Total messages - {0}\n".format(len(db.keys())-1))
+        for key in db.keys():
+            if key == "banned":
+                file.write("{0} - {1}\n".format(key, list(db[key])))
+                file.write("------------------------------------\n")
+        for id in range(highest_id+1):
+            for key in db.keys():
+                if key == str(id):
+                    file.write("{0} - {1}\n".format(key, list(db[key])))
+    await asyncio.sleep(5)
+    await ctx.send(file=discord.File("db.txt")) #sending blank file
+    #os.remove("db.txt")
+    
 @bot.command(name="del", pass_context=True)
 @commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
 async def db_delete(ctx, id):

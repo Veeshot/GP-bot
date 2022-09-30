@@ -1,10 +1,13 @@
+#env file with token
+.env
+
+#db output txt file
+.txt
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
-#env file with token
-.env
 
 # C extensions
 *.so
