@@ -135,22 +135,20 @@ async def file_list(ctx):
             if int(key) > highest_id:
                 highest_id = int(key)
     try:
-        file = open("db.txt", "w")
+        with open("db.txt", "w") as file:
+            file.write("Total messages - {0}\n".format(len(db.keys())-1))
+            for key in db.keys():
+                if key == "banned":
+                    file.write("{0} - {1}\n".format(key, list(db[key])))
+                    file.write("------------------------------------\n")
+            for id in range(highest_id+1):
+                for key in db.keys():
+                    if key == str(id):
+                        file.write("{0} - {1}\n".format(key, list(db[key])))
     except Exception as e:
        await ctx.send("Failed due to {}".format(e))
-    else:
-        file.write("Total messages - {0}\n".format(len(db.keys())-1))
-        for key in db.keys():
-            if key == "banned":
-                file.write("{0} - {1}\n".format(key, list(db[key])))
-                file.write("------------------------------------\n")
-        for id in range(highest_id+1):
-            for key in db.keys():
-                if key == str(id):
-                    file.write("{0} - {1}\n".format(key, list(db[key])))
-    await asyncio.sleep(5)
     await ctx.send(file=discord.File("db.txt")) #sending blank file
-    #os.remove("db.txt")
+    os.remove("db.txt")
     
 @bot.command(name="del", pass_context=True)
 @commands.has_any_role("Full admin", "Full admin vol.2")  #příkaz mohou používat pouze určité role
